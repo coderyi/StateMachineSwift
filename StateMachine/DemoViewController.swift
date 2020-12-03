@@ -14,6 +14,7 @@ class DemoViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         var orderStateMachine: SMStateMachine = SMStateMachine()
+
         var normal: SMState = SMState("normal")
         normal.setDidEnterStateBlock { (state, transition) in
             print("normal DidEnterStateBlock \(transition?.userInfo)")
@@ -28,11 +29,13 @@ class DemoViewController: UIViewController {
         cancel.setDidEnterStateBlock { (state, transition) in
             print("cancel didEnterStateBlock \(transition?.userInfo)")
         }
+
         orderStateMachine.addStates(arrayOfStates: [normal, purchase, cancel])
         orderStateMachine.initialState = normal
         
         var confirmOrder: SMEvent = SMEvent("confirmOrder", sourceStates: [normal], destinationState: purchase)
         var cancelOrder: SMEvent = SMEvent("cancelOrder", sourceStates: [purchase, normal], destinationState: cancel)
+        
         orderStateMachine.addEvents(arrayOfEvents: [confirmOrder, cancelOrder])
         
         orderStateMachine.activate()

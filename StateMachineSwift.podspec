@@ -9,5 +9,5 @@ Pod::Spec.new do |s|
   s.source = { :git => 'https://github.com/coderyi/StateMachineSwift.git', :tag => "v#{s.version}" }
   s.swift_version = '5.0'
   s.ios.deployment_target = '8.0'
-  s.source_files = 'StateMachineSwift/StateMachineSwift/*.swift'
+  s.source_files = 'StateMachine/StateMachine/*.swift'
 end
