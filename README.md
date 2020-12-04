@@ -6,11 +6,12 @@ StateMachineSwift, supports an arbitrary number of States and Events.
 pod 'StateMachineSwift'
 ```
 
-### 功能
+### Features
 
-* 支持任意数量的State和Event
-* 可以方便地响应状态转换，并且支持通过userInfo传递数据
-
+* Supports an arbitrary number of States and Events.
+* States and Events support a thorough set of callbacks for responding to state transitions.
+* Transitions support the inclusion of arbitrary user data via a userInfo dictionary, making it easy to broadcast metadata across callbacks.
+* Lightweight.
 
 ## License
 Released under [MIT License](LICENSE).
