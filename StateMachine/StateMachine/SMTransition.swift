@@ -6,16 +6,12 @@
 //
 
 import UIKit
-open class SMTransition: Hashable {
+open class SMTransition: NSObject {
             
     public let sourceState: SMState
     public let event: SMEvent
     public let stateMachine: SMStateMachine
     public var userInfo: [AnyHashable: Any]?
-    
-    public var hashValue: Int {
-        return self.event.name.hashValue
-    }
     
     public init(_ event: SMEvent,
                 sourceState: SMState,
@@ -25,14 +21,5 @@ open class SMTransition: Hashable {
         self.sourceState = sourceState
         self.stateMachine = stateMachine
         self.userInfo = userInfo
-    }
-}
-
-extension SMTransition: Equatable {
-    
-    static public func == (lhs: SMTransition,
-                         rhs: SMTransition) -> Bool {
-        
-        return lhs.event.name == rhs.event.name && lhs.sourceState == rhs.sourceState
     }
 }

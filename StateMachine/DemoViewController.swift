@@ -13,6 +13,7 @@ class DemoViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        view.backgroundColor = UIColor(white: 1, alpha: 1)
         var orderStateMachine: SMStateMachine = SMStateMachine()
 
         var normal: SMState = SMState("normal")
