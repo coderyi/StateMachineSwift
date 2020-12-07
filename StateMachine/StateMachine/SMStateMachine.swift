@@ -20,6 +20,7 @@ open class SMStateMachine {
     private var currentState: SMState?
     private lazy var events: [SMEvent] = [SMEvent]()
     private var active: Bool?
+    private let lock = NSRecursiveLock()
     
     public init() {
     }
@@ -100,6 +101,8 @@ open class SMStateMachine {
         if active == true {
             return
         }
+        lock.lock()
+        defer { lock.unlock() }
         active = true
         if ((initialState?.willEnterStateBlock) != nil) {
             initialState!.willEnterStateBlock!(initialState!, nil)
@@ -121,6 +124,9 @@ open class SMStateMachine {
 
     public func fireEvent(eventName: String,
                      userInfo: [AnyHashable: Any]?) -> Bool{
+        lock.lock()
+        defer { lock.unlock() }
+
         if active == false {
             activate()
         }
