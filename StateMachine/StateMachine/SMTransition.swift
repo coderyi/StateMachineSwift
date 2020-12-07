@@ -22,4 +22,8 @@ open class SMTransition: NSObject {
         self.stateMachine = stateMachine
         self.userInfo = userInfo
     }
+    
+    public func destinationState() -> SMState {
+        return event.destinationState
+    }
 }
