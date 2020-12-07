@@ -6,7 +6,7 @@
 //
 
 import UIKit
-open class SMEvent: Hashable {
+open class SMEvent: NSObject, NSCoding, NSCopying {
     
     var shouldFireEventBlock: ((_ event: SMEvent, _ transition: SMTransition?) -> Bool)?
     var willFireEventBlock: ((_ event: SMEvent, _ transition: SMTransition?) -> Bool)?
@@ -15,10 +15,6 @@ open class SMEvent: Hashable {
     public let name: String
     public let destinationState: SMState
     public let sourceStates: [SMState]
-    
-    public var hashValue: Int {
-        return self.name.hashValue
-    }
 
     public init(_ name: String,
                 sourceStates: [SMState],
@@ -39,14 +35,28 @@ open class SMEvent: Hashable {
     public func setDidFireEventBlock(_ block: @escaping(_ event: SMEvent, _ transition: SMTransition?) -> Bool) {
         didFireEventBlock = block
     }
-
-}
-
-extension SMEvent: Equatable {
     
-    static public func == (lhs: SMEvent,
-                         rhs: SMEvent) -> Bool {
-        
-        return lhs.name == rhs.name && lhs.destinationState == rhs.destinationState
+    public func encode(with aCoder: NSCoder) {
+        aCoder.encode(self.name, forKey: "name")
+        aCoder.encode(self.sourceStates, forKey: "sourceStates")
+        aCoder.encode(self.destinationState, forKey: "destinationState")
+
     }
+
+    public required init?(coder aDecoder: NSCoder) {
+        self.name = aDecoder.decodeObject(forKey: "name") as! String
+        self.sourceStates = aDecoder.decodeObject(forKey: "sourceStates") as! [SMState]
+        self.destinationState = aDecoder.decodeObject(forKey: "destinationState") as! SMState
+    }
+    
+    open func copy(with zone: NSZone? = nil) -> Any
+    {
+        let copy = SMEvent(name, sourceStates: sourceStates, destinationState: destinationState)
+        copy.shouldFireEventBlock = shouldFireEventBlock
+        copy.willFireEventBlock = willFireEventBlock
+        copy.didFireEventBlock = didFireEventBlock
+
+        return copy
+    }
+
 }
