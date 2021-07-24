@@ -101,22 +101,28 @@ open class SMStateMachine {
         if active == true {
             return
         }
+        guard let initialState = initialState else {
+            return
+        }
         lock.lock()
         defer { lock.unlock() }
         active = true
-        if ((initialState?.willEnterStateBlock) != nil) {
-            initialState!.willEnterStateBlock!(initialState!, nil)
+        if let willEnterStateBlock = initialState.willEnterStateBlock {
+            willEnterStateBlock(initialState, nil)
         }
         currentState = initialState
-        if ((initialState?.didEnterStateBlock) != nil) {
-            initialState!.didEnterStateBlock!(initialState!, nil)
+        if let didEnterStateBlock = initialState.didEnterStateBlock {
+            didEnterStateBlock(initialState, nil)
         }
     }
 
     public func canFireEvent(eventName: String) -> Bool {
+        guard let currentState = currentState else {
+            return false
+        }
         var event: SMEvent? = eventNamed(eventName)
         if event != nil {
-            var isContain: Bool? = event?.sourceStates.contains(currentState!)
+            var isContain: Bool? = event?.sourceStates.contains(currentState)
             return isContain ?? false
         }
         return false
@@ -126,31 +132,36 @@ open class SMStateMachine {
                      userInfo: [AnyHashable: Any]?) -> Bool{
         lock.lock()
         defer { lock.unlock() }
+        guard let event: SMEvent = eventNamed(eventName) else {
+            return false
+        }
+        guard var currentState = currentState else {
+            return false
+        }
 
         if active == false {
             activate()
         }
-        var event: SMEvent? = eventNamed(eventName)
         if canFireEvent(eventName: eventName) == false {
             return false
         }
-        var transition: SMTransition = SMTransition(event!, sourceState: currentState!, stateMachine: self, userInfo: userInfo!)
-        if ((event?.shouldFireEventBlock) != nil) {
-            if event!.shouldFireEventBlock!(event!, transition) == false {
+        var transition: SMTransition = SMTransition(event, sourceState: currentState, stateMachine: self, userInfo: userInfo)
+        if let shouldFireEventBlock = event.shouldFireEventBlock {
+            if shouldFireEventBlock(event, transition) == false {
                 return false
             }
         }
 
-        var oldState: SMState = currentState!
-        var newState: SMState? = event?.destinationState
-        if ((event?.willFireEventBlock) != nil) {
-            event!.willFireEventBlock!(event!, transition)
+        var oldState: SMState = currentState
+        var newState: SMState = event.destinationState
+        if let willFireEventBlock = event.willFireEventBlock {
+            willFireEventBlock(event, transition)
         }
-        if ((oldState.willExitStateBlock) != nil) {
-            oldState.willExitStateBlock!(oldState, transition)
+        if let willExitStateBlock = oldState.willExitStateBlock {
+            willExitStateBlock(oldState, transition)
         }
-        if ((newState?.willEnterStateBlock) != nil) {
-            newState!.willEnterStateBlock!(newState!, transition)
+        if let willEnterStateBlock = newState.willEnterStateBlock {
+            willEnterStateBlock(newState, transition)
         }
 
         currentState = newState
@@ -161,15 +172,15 @@ open class SMStateMachine {
         notificationInfo[SMStateMachineDidChangeStateEventUserInfoKey] = event
         notificationInfo[SMStateMachineDidChangeStateTransitionUserInfoKey] = transition
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: SMStateMachineDidChangeStateNotification), object: self, userInfo: notificationInfo)
-        if ((oldState.didExitStateBlock) != nil) {
-            oldState.didExitStateBlock!(oldState, transition)
+        if let didExitStateBlock = oldState.didExitStateBlock {
+            didExitStateBlock(oldState, transition)
         }
 
-        if ((newState?.didEnterStateBlock) != nil) {
-            newState!.didEnterStateBlock!(newState!, transition)
+        if let didEnterStateBlock = newState.didEnterStateBlock {
+            didEnterStateBlock(newState, transition)
         }
-        if ((event?.didFireEventBlock) != nil) {
-            event!.didFireEventBlock!(event!, transition)
+        if let didFireEventBlock = event.didFireEventBlock {
+            didFireEventBlock(event, transition)
         }
 
         return true

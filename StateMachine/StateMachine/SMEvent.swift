@@ -44,9 +44,9 @@ open class SMEvent: NSObject, NSCoding, NSCopying {
     }
 
     public required init?(coder aDecoder: NSCoder) {
-        self.name = aDecoder.decodeObject(forKey: "name") as! String
-        self.sourceStates = aDecoder.decodeObject(forKey: "sourceStates") as! [SMState]
-        self.destinationState = aDecoder.decodeObject(forKey: "destinationState") as! SMState
+        self.name = aDecoder.decodeObject(forKey: "name") as? String ?? ""
+        self.sourceStates = aDecoder.decodeObject(forKey: "sourceStates") as? [SMState] ?? []
+        self.destinationState = aDecoder.decodeObject(forKey: "destinationState") as? SMState ?? SMState("")
     }
     
     open func copy(with zone: NSZone? = nil) -> Any
