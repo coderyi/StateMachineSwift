@@ -14,19 +14,19 @@ class DemoViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         view.backgroundColor = UIColor(white: 1, alpha: 1)
-        var orderStateMachine: SMStateMachine = SMStateMachine()
+        let orderStateMachine: SMStateMachine = SMStateMachine()
 
-        var normal: SMState = SMState("normal")
+        let normal: SMState = SMState("normal")
         normal.setDidEnterStateBlock { (state, transition) in
             print("normal DidEnterStateBlock \(transition?.userInfo)")
         }
         
-        var purchase: SMState = SMState("purchase")
+        let purchase: SMState = SMState("purchase")
         purchase.setDidEnterStateBlock { (state, transition) in
             print("purchase DidEnterStateBlock \(transition?.userInfo)")
         }
         
-        var cancel: SMState = SMState("cancel")
+        let cancel: SMState = SMState("cancel")
         cancel.setDidEnterStateBlock { (state, transition) in
             print("cancel didEnterStateBlock \(transition?.userInfo)")
         }
@@ -34,17 +34,17 @@ class DemoViewController: UIViewController {
         orderStateMachine.addStates(arrayOfStates: [normal, purchase, cancel])
         orderStateMachine.initialState = normal
         
-        var confirmOrder: SMEvent = SMEvent("confirmOrder", sourceStates: [normal], destinationState: purchase)
-        var cancelOrder: SMEvent = SMEvent("cancelOrder", sourceStates: [purchase, normal], destinationState: cancel)
+        let confirmOrder: SMEvent = SMEvent("confirmOrder", sourceStates: [normal], destinationState: purchase)
+        let cancelOrder: SMEvent = SMEvent("cancelOrder", sourceStates: [purchase, normal], destinationState: cancel)
         
         orderStateMachine.addEvents(arrayOfEvents: [confirmOrder, cancelOrder])
         
         orderStateMachine.activate()
         orderStateMachine.isInState("normal")
 
-        var userInfo = ["hello": "world"]
-        var success: Bool = orderStateMachine.fireEvent(eventName: "confirmOrder", userInfo: userInfo)
-        success = orderStateMachine.fireEvent(eventName: "cancelOrder", userInfo: userInfo)
+        let userInfo = ["hello": "world"]
+        orderStateMachine.fireEvent(eventName: "confirmOrder", userInfo: userInfo)
+        orderStateMachine.fireEvent(eventName: "cancelOrder", userInfo: userInfo)
         print(orderStateMachine.canFireEvent(eventName: "cancelOrder"))
 
     }

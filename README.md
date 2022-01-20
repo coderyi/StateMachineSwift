@@ -16,26 +16,26 @@ pod 'StateMachineSwift'
 ### Example
 
 ```
-var orderStateMachine: SMStateMachine = SMStateMachine()
+let orderStateMachine: SMStateMachine = SMStateMachine()
 
-var normal: SMState = SMState("normal")
-var purchase: SMState = SMState("purchase")
-var cancel: SMState = SMState("cancel")
+let normal: SMState = SMState("normal")
+let purchase: SMState = SMState("purchase")
+let cancel: SMState = SMState("cancel")
 
 orderStateMachine.addStates(arrayOfStates: [normal, purchase, cancel])
 orderStateMachine.initialState = normal
 
-var confirmOrder: SMEvent = SMEvent("confirmOrder", sourceStates: [normal], destinationState: purchase)
-var cancelOrder: SMEvent = SMEvent("cancelOrder", sourceStates: [purchase, normal], destinationState: cancel)
+let confirmOrder: SMEvent = SMEvent("confirmOrder", sourceStates: [normal], destinationState: purchase)
+let cancelOrder: SMEvent = SMEvent("cancelOrder", sourceStates: [purchase, normal], destinationState: cancel)
 
 orderStateMachine.addEvents(arrayOfEvents: [confirmOrder, cancelOrder])
 
 orderStateMachine.activate()
 orderStateMachine.isInState("normal")
 
-var userInfo = ["hello": "world"]
-var success: Bool = orderStateMachine.fireEvent(eventName: "confirmOrder", userInfo: userInfo)
-success = orderStateMachine.fireEvent(eventName: "cancelOrder", userInfo: userInfo)
+let userInfo = ["hello": "world"]
+orderStateMachine.fireEvent(eventName: "confirmOrder", userInfo: userInfo)
+orderStateMachine.fireEvent(eventName: "cancelOrder", userInfo: userInfo)
 ```
 ## License
 Released under [MIT License](LICENSE).
